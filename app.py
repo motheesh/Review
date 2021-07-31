@@ -18,14 +18,17 @@ def home():
 
 @app.route("/search")
 def search():
-    searchKey=request.args['keyword']
-    print(request)
-    reviews=FlipkartWebScrapper().get_all_reviews(searchKey)
-    if reviews==None:
-        logger.log_error(f"not able to scarp review for product {searchKey}","error")
-        return render_template("Error.html",ErrorMessage=f"No product available with name '{searchKey}'")
-    logger.log_error(f"{request.url}|{request.method}","info")
-    return render_template("table.html",reviews=reviews)
+    try:
+        searchKey=request.args['keyword']
+        print(request)
+        reviews=FlipkartWebScrapper().get_all_reviews(searchKey)
+        if reviews==None:
+            logger.log_error(f"not able to scarp review for product {searchKey}","error")
+            return render_template("Error.html",ErrorMessage=f"No product available with name '{searchKey}'")
+        logger.log_error(f"{request.url}|{request.method}","info")
+        return render_template("table.html",reviews=reviews)
+    except Exception as e:
+        return render_template("Error.html",ErrorMessage=f"ERROR: '{e}'")
 
 if __name__=="__main__":
     app.run(port=5000) 
